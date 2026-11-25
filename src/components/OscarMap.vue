@@ -229,6 +229,7 @@ import { facilityTypeDomain, facilityTypeTitle, programTitle, findTerritoryId, p
 import 'ol/ol.css'
 import overview from '../data/stationOverview.json'
 import { loadFilteredMap } from '../api/mapFacilities'
+import { runtimeConfig } from '../utils/runtimeConfig'
 
 interface HoverInfo {
   count?: number
@@ -355,6 +356,7 @@ const clusterLayer = new VectorLayer({
 let tileClusterRevision = 0
 let clusterKey = ''
 let overviewUnavailable = overview.source !== WIGOS_COLLECTION_URL
+let gofcOverviewFailed = false
 const pendingTiles = new Set<unknown>()
 const realtimeTileSource = new VectorTileSource({
   format: new MVT({ layers: ['hits'] }),
@@ -385,8 +387,13 @@ const stationTiles = new VectorTileLayer({
     return tileStyles[facilityTypeDomain(feature.get('properties.facilityType.id') ?? '')]
   },
 })
+function canUseOverviewTiles() {
+  return tilesActive.value && !overviewUnavailable &&
+    (mapRef.value?.getView().getZoom() ?? DEFAULT_ZOOM) < overview.maxZoom + 1
+}
+
 function selectStationSource() {
-  const local = tilesActive.value && !overviewUnavailable && (mapRef.value?.getView().getZoom() ?? DEFAULT_ZOOM) < overview.maxZoom + 1
+  const local = canUseOverviewTiles() && (!runtimeConfig.gofcTilesFirst || gofcOverviewFailed)
   overviewActive.value = local
   const next = local ? overviewTileSource : realtimeTileSource
   if (tileSource === next) return
@@ -535,6 +542,9 @@ for (const source of [overviewTileSource, realtimeTileSource]) {
     tileFinished(event.tile)
     if (source === overviewTileSource) {
       overviewUnavailable = true
+      selectStationSource()
+    } else if (runtimeConfig.gofcTilesFirst && canUseOverviewTiles()) {
+      gofcOverviewFailed = true
       selectStationSource()
     } else if (tilesActive.value) mapError.value = locale.value === 'zh' ? '站点瓦片加载失败，请重试' : 'Station tiles failed to load. Please retry.'
   })

@@ -18,6 +18,7 @@ services:
       AMAP_SECURITY_JS_CODE: ${AMAP_SECURITY_JS_CODE:-}
       AMAP_SERVICE_HOST: ${AMAP_SERVICE_HOST:-}
       WIGOS_GOFC_URL: ${WIGOS_GOFC_URL:-}
+      WIGOS_GOFC_TILES_FIRST: ${WIGOS_GOFC_TILES_FIRST:-}
     ports:
       - "80:8080"
     restart: unless-stopped

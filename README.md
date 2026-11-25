@@ -157,6 +157,8 @@ Linux containers mode for actual packaging; `-Check` does not require Docker.
 
    The default catalogue host is `https://wmo-resource-catalogue.labs.wis2dev.io`. Set `VITE_WIGOS_GOFC_URL` in a local `.env.local` file to override it, then restart Vite or rebuild.
 
+   Unfiltered station maps prefer GOFC vector tiles in Vite development and in builds made with `--mode test` or `--mode staging`. If a GOFC tile fails at low zoom, the map uses the local overview for the rest of the page session when the snapshot matches the configured catalogue. For a Docker test deployment, set `WIGOS_GOFC_TILES_FIRST=true` in its deployment environment. To override the Vite default, set `VITE_WIGOS_GOFC_TILES_FIRST` to `true` or `false`.
+
 3. **Original WMDR XML**
 
    The XML download link points directly at the `rel="original"` URL supplied by the catalogue record (today `https://oscar.wmo.int/oai/provider`). No `/wmdr-source` proxy exists in `nginx.conf` or `vite.config.ts`, and no CORS-dependent fetch is made. That OAI endpoint will be retired with the OSCAR/Surface renewal; when the original WMDR2 documents move to a new archive, the catalogue link changes and the portal follows it without a code change. `nginx.conf` still keeps the `/_AMapService/` proxies for the AMap basemap styles; those are unrelated to WMDR downloads.

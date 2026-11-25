@@ -19,6 +19,7 @@ window.__WIGOS_CONFIG__ = {
   amapKey: "$(escape "${AMAP_KEY:-}")",
   amapServiceHost: "$(escape "$service_host")",
   wigosGofcUrl: "$(escape "${WIGOS_GOFC_URL:-}")",
+  gofcTilesFirst: "$(escape "${WIGOS_GOFC_TILES_FIRST:-}")",
 };
 EOF
 

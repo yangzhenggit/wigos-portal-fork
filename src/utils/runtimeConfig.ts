@@ -15,6 +15,7 @@ export interface PortalRuntimeConfig {
   amapSecurityJsCode?: string
   amapServiceHost?: string
   wigosGofcUrl?: string
+  gofcTilesFirst?: boolean
 }
 
 type RawConfig = Partial<Record<keyof PortalRuntimeConfig, unknown>>
@@ -30,7 +31,8 @@ const read = (key: keyof PortalRuntimeConfig): string | undefined => {
   return trimmed ? trimmed : undefined
 }
 
-const env = import.meta.env as Record<string, string | undefined>
+const env = import.meta.env
+const gofcTilesFirst = read('gofcTilesFirst') ?? env.VITE_WIGOS_GOFC_TILES_FIRST?.trim()
 
 export const runtimeConfig: PortalRuntimeConfig = {
   tiandituKey: read('tiandituKey') ?? env.VITE_TIANDITU_KEY?.trim(),
@@ -38,4 +40,7 @@ export const runtimeConfig: PortalRuntimeConfig = {
   amapSecurityJsCode: read('amapSecurityJsCode') ?? env.VITE_AMAP_SECURITY_JS_CODE?.trim(),
   amapServiceHost: read('amapServiceHost') ?? env.VITE_AMAP_SERVICE_HOST?.trim(),
   wigosGofcUrl: read('wigosGofcUrl') ?? env.VITE_WIGOS_GOFC_URL?.trim(),
+  gofcTilesFirst: gofcTilesFirst
+    ? gofcTilesFirst === 'true'
+    : env.DEV || env.MODE === 'test' || env.MODE === 'staging',
 }
