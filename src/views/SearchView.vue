@@ -36,7 +36,7 @@
                    :aria-label="t('search.advanced.reportingStatus')">
           <el-option v-for="status in visibleStatuses" :key="status" :value="status" :label="t('search.advanced.' + status)" />
         </el-select>
-        <p v-if="statusSource === 'assessed'" role="status">{{ t('search.advanced.assessedUnavailable') }}</p>
+        <!-- <p v-if="statusSource === 'assessed'" role="status">{{ t('search.advanced.assessedUnavailable') }}</p> -->
       </fieldset>
       <form id="search-elevation" class="range-filter" @submit.prevent="applyRanges">
         <fieldset class="advanced-filter">
